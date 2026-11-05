@@ -42,11 +42,13 @@ function EventModal({ initialDate, event, onSave, onDelete, onClose }: ModalProp
   const [note, setNote]     = useState(event?.note ?? '')
   const [color, setColor]   = useState<EventColor>(event?.color ?? 'blue')
   const titleRef = useRef<HTMLInputElement>(null)
+  const isSaving = useRef(false)
 
   useEffect(() => { titleRef.current?.focus() }, [])
 
   const handleSave = () => {
-    if (!title.trim()) return
+    if (!title.trim() || isSaving.current) return
+    isSaving.current = true
     onSave({ title: title.trim(), date, time: time || undefined, endTime: endTime || undefined, note: note || undefined, color })
     onClose()
   }
