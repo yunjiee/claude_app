@@ -11,7 +11,8 @@ interface WorkspaceContextValue {
   updatePage: (page: Page) => void
   deletePage: (id: string) => void
   reorderPages: (ids: string[]) => void
-  createEvent: (date: string, title: string) => void
+  createEvent: (event: Omit<CalendarEvent, 'id'>) => void
+  updateEvent: (event: CalendarEvent) => void
   deleteEvent: (id: string) => void
 }
 
@@ -59,15 +60,15 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const createEvent = useCallback((date: string, title: string) => {
-    const event: CalendarEvent = {
-      id: store.generateId(),
-      title,
-      date,
-      color: 'blue',
-    }
+  const createEvent = useCallback((data: Omit<CalendarEvent, 'id'>) => {
+    const event: CalendarEvent = { id: store.generateId(), ...data }
     store.saveEvent(event)
     setEvents((prev) => [...prev, event])
+  }, [])
+
+  const updateEvent = useCallback((event: CalendarEvent) => {
+    store.saveEvent(event)
+    setEvents((prev) => prev.map((e) => (e.id === event.id ? event : e)))
   }, [])
 
   const deleteEvent = useCallback((id: string) => {
@@ -77,7 +78,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   return (
     <WorkspaceContext.Provider
-      value={{ pages, events, createPage, updatePage, deletePage, reorderPages, createEvent, deleteEvent }}
+      value={{ pages, events, createPage, updatePage, deletePage, reorderPages, createEvent, updateEvent, deleteEvent }}
     >
       {children}
     </WorkspaceContext.Provider>
