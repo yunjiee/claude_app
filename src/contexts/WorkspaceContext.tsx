@@ -1,0 +1,82 @@
+'use client'
+
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import { Page, CalendarEvent } from '@/types/workspace'
+import * as store from '@/lib/workspace/store'
+
+interface WorkspaceContextValue {
+  pages: Page[]
+  events: CalendarEvent[]
+  createPage: () => Page
+  updatePage: (page: Page) => void
+  deletePage: (id: string) => void
+  createEvent: (date: string, title: string) => void
+  deleteEvent: (id: string) => void
+}
+
+const WorkspaceContext = createContext<WorkspaceContextValue | null>(null)
+
+export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  const [pages, setPages] = useState<Page[]>([])
+  const [events, setEvents] = useState<CalendarEvent[]>([])
+
+  // 只在 client 端載入 localStorage
+  useEffect(() => {
+    setPages(store.getPages())
+    setEvents(store.getEvents())
+  }, [])
+
+  const createPage = useCallback((): Page => {
+    const page: Page = {
+      id: store.generateId(),
+      title: '未命名頁面',
+      content: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    store.savePage(page)
+    setPages((prev) => [...prev, page])
+    return page
+  }, [])
+
+  const updatePage = useCallback((page: Page) => {
+    const updated = { ...page, updatedAt: new Date().toISOString() }
+    store.savePage(updated)
+    setPages((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
+  }, [])
+
+  const deletePage = useCallback((id: string) => {
+    store.deletePage(id)
+    setPages((prev) => prev.filter((p) => p.id !== id))
+  }, [])
+
+  const createEvent = useCallback((date: string, title: string) => {
+    const event: CalendarEvent = {
+      id: store.generateId(),
+      title,
+      date,
+      color: 'blue',
+    }
+    store.saveEvent(event)
+    setEvents((prev) => [...prev, event])
+  }, [])
+
+  const deleteEvent = useCallback((id: string) => {
+    store.deleteEvent(id)
+    setEvents((prev) => prev.filter((e) => e.id !== id))
+  }, [])
+
+  return (
+    <WorkspaceContext.Provider
+      value={{ pages, events, createPage, updatePage, deletePage, createEvent, deleteEvent }}
+    >
+      {children}
+    </WorkspaceContext.Provider>
+  )
+}
+
+export function useWorkspace() {
+  const ctx = useContext(WorkspaceContext)
+  if (!ctx) throw new Error('useWorkspace must be used inside WorkspaceProvider')
+  return ctx
+}

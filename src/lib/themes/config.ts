@@ -22,6 +22,13 @@ export const themes: Theme[] = [
     icon: '🛒',
     path: '/shop',
   },
+  {
+    id: 'workspace',
+    name: '工作區',
+    description: '日曆與頁面管理',
+    icon: '🗂',
+    path: '/workspace',
+  },
 ]
 
 export const defaultTheme: Theme = themes[0]

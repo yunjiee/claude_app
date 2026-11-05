@@ -1,4 +1,4 @@
-export type ThemeId = 'blog' | 'portfolio' | 'shop'
+export type ThemeId = 'blog' | 'portfolio' | 'shop' | 'workspace'
 
 export interface Theme {
   id: ThemeId
