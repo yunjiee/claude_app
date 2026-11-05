@@ -51,8 +51,8 @@ function AppPreview() {
   return (
     <motion.div {...inView(0.1)} className="relative mx-auto mt-14 max-w-3xl">
       <div className="absolute inset-x-20 top-6 h-28 bg-gradient-to-r from-blue-400/20 via-violet-400/25 to-indigo-400/20 blur-3xl -z-10" />
-      <div className="rounded-2xl border border-white/20 bg-white/90 backdrop-blur-xl shadow-2xl shadow-gray-400/20 overflow-hidden ring-1 ring-gray-100">
-        <div className="flex items-center gap-3 border-b border-gray-100 bg-gray-50/80 px-4 py-3">
+      <div className="rounded-2xl border border-white/20 dark:border-gray-700/50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl shadow-gray-400/20 dark:shadow-gray-900/50 overflow-hidden ring-1 ring-gray-100 dark:ring-gray-800">
+        <div className="flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/80 px-4 py-3">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-red-400/90" />
             <div className="w-3 h-3 rounded-full bg-yellow-400/90" />
@@ -64,15 +64,15 @@ function AppPreview() {
           </div>
         </div>
         <div className="flex h-56 sm:h-72">
-          <div className="w-44 flex-shrink-0 border-r border-gray-100 bg-gray-50/60 p-4 flex flex-col gap-1">
-            <div className="text-[11px] font-bold text-gray-900 mb-2 px-2">🗂 工作區</div>
+          <div className="w-44 flex-shrink-0 border-r border-gray-100 dark:border-gray-800 bg-gray-50/60 dark:bg-gray-800/60 p-4 flex flex-col gap-1">
+            <div className="text-[11px] font-bold text-gray-900 dark:text-gray-100 mb-2 px-2">🗂 工作區</div>
             {[
               { icon: '📄', name: 'Q4 計劃',   color: 'text-blue-500' },
               { icon: '🎨', name: '設計稿整理', color: 'text-violet-500' },
               { icon: '📌', name: '讀書筆記',   color: 'text-orange-500' },
               { icon: '✅', name: '本週待辦',   color: 'text-emerald-500' },
             ].map(p => (
-              <div key={p.name} className="flex items-center gap-2 text-[11px] text-gray-500 py-1.5 px-2 rounded-lg hover:bg-white/80 cursor-pointer">
+              <div key={p.name} className="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 py-1.5 px-2 rounded-lg hover:bg-white/80 dark:hover:bg-gray-700/80 cursor-pointer">
                 <span className={p.color}>{p.icon}</span>
                 <span>{p.name}</span>
               </div>
@@ -113,7 +113,7 @@ export default function HomePage() {
   const { themes } = useTheme()
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-20 overflow-x-hidden">
+    <main className="mx-auto max-w-5xl px-6 py-20 overflow-x-hidden bg-white dark:bg-gray-950">
 
       {/* HERO */}
       <section className="relative text-center mb-32 min-h-[520px] flex flex-col items-center justify-center">
@@ -126,20 +126,20 @@ export default function HomePage() {
         </div>
 
         <motion.div {...fadeUp(0)}
-          className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-gray-500 mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-8 shadow-sm"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
           正在開發中
         </motion.div>
 
-        <motion.h1 {...fadeUp(0.07)} className="text-6xl sm:text-7xl font-black tracking-tight leading-[1.06] mb-5">
+        <motion.h1 {...fadeUp(0.07)} className="text-6xl sm:text-7xl font-black tracking-tight leading-[1.06] mb-5 text-gray-900 dark:text-gray-50">
           一個平台<br />
           <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
             無限可能
           </span>
         </motion.h1>
 
-        <motion.p {...fadeUp(0.14)} className="text-base sm:text-lg text-gray-400 max-w-sm mx-auto leading-relaxed mb-10">
+        <motion.p {...fadeUp(0.14)} className="text-base sm:text-lg text-gray-400 dark:text-gray-500 max-w-sm mx-auto leading-relaxed mb-10">
           部落格 · 作品集 · 商城 · 工作區<br />
           <span className="text-sm">自由切換，專注在你想做的事</span>
         </motion.p>
@@ -160,24 +160,24 @@ export default function HomePage() {
 
       {/* STEP FLOW */}
       <section className="mb-28">
-        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">三步開始</motion.p>
-        <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-100 rounded-3xl overflow-hidden shadow-sm">
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 dark:text-gray-500 uppercase text-center mb-10">三步開始</motion.p>
+        <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden shadow-sm">
           {STEPS.map((s, i) => (
-            <motion.div key={s.n} {...inView(i * 0.1)} className="relative flex flex-col bg-white p-8 hover:bg-gray-50/50 transition-colors">
+            <motion.div key={s.n} {...inView(i * 0.1)} className="relative flex flex-col bg-white dark:bg-gray-900 p-8 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
               {i < 2 && (
                 <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm items-center justify-center text-gray-400 text-sm">›</div>
               )}
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <div className="text-[10px] font-bold tracking-widest text-gray-300 mb-1">{s.n}</div>
-                  <div className="w-10 h-10 rounded-xl bg-gray-900 text-white text-sm font-bold flex items-center justify-center shadow">{parseInt(s.n)}</div>
+                  <div className="w-10 h-10 rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-bold flex items-center justify-center shadow">{parseInt(s.n)}</div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xl">{s.icon}</span>
-                    <span className="font-bold text-sm text-gray-900">{s.title}</span>
+                    <span className="font-bold text-sm text-gray-900 dark:text-gray-100">{s.title}</span>
                   </div>
-                  <p className="text-xs text-gray-400 leading-relaxed">{s.desc}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed">{s.desc}</p>
                 </div>
               </div>
             </motion.div>
@@ -187,7 +187,7 @@ export default function HomePage() {
 
       {/* THEME CARDS — dark glass + CardSpotlight */}
       <section className="mb-28">
-        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">選擇主題</motion.p>
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 dark:text-gray-500 uppercase text-center mb-10">選擇主題</motion.p>
         <div className="relative rounded-3xl p-8 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 -z-10" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(99,102,241,0.3),transparent_60%)] -z-10" />
@@ -224,17 +224,17 @@ export default function HomePage() {
 
       {/* FEATURES */}
       <section>
-        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">核心特色</motion.p>
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 dark:text-gray-500 uppercase text-center mb-10">核心特色</motion.p>
         <div className="grid gap-4 sm:grid-cols-3">
           {FEATURES.map((f, i) => (
             <motion.div key={f.label} {...inView(i * 0.1)}
-              className="relative flex gap-4 items-start rounded-2xl border border-gray-100 bg-white p-6 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="relative flex gap-4 items-start rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 overflow-hidden hover:shadow-lg dark:hover:shadow-gray-900/50 hover:-translate-y-1 transition-all duration-300"
             >
               <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${f.bar} rounded-l-2xl`} />
               <div className="text-2xl">{f.icon}</div>
               <div>
-                <p className="font-bold text-sm text-gray-900">{f.label}</p>
-                <p className="mt-1 text-xs text-gray-400 leading-relaxed">{f.desc}</p>
+                <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{f.label}</p>
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500 leading-relaxed">{f.desc}</p>
               </div>
             </motion.div>
           ))}
