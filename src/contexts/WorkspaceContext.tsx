@@ -10,6 +10,7 @@ interface WorkspaceContextValue {
   createPage: () => Page
   updatePage: (page: Page) => void
   deletePage: (id: string) => void
+  reorderPages: (ids: string[]) => void
   createEvent: (date: string, title: string) => void
   deleteEvent: (id: string) => void
 }
@@ -20,7 +21,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [pages, setPages] = useState<Page[]>([])
   const [events, setEvents] = useState<CalendarEvent[]>([])
 
-  // 只在 client 端載入 localStorage
   useEffect(() => {
     setPages(store.getPages())
     setEvents(store.getEvents())
@@ -31,6 +31,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       id: store.generateId(),
       title: '未命名頁面',
       content: '',
+      tags: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -48,6 +49,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const deletePage = useCallback((id: string) => {
     store.deletePage(id)
     setPages((prev) => prev.filter((p) => p.id !== id))
+  }, [])
+
+  const reorderPages = useCallback((ids: string[]) => {
+    store.reorderPages(ids)
+    setPages((prev) => {
+      const map = new Map(prev.map((p) => [p.id, p]))
+      return ids.map((id) => map.get(id)).filter(Boolean) as Page[]
+    })
   }, [])
 
   const createEvent = useCallback((date: string, title: string) => {
@@ -68,7 +77,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   return (
     <WorkspaceContext.Provider
-      value={{ pages, events, createPage, updatePage, deletePage, createEvent, deleteEvent }}
+      value={{ pages, events, createPage, updatePage, deletePage, reorderPages, createEvent, deleteEvent }}
     >
       {children}
     </WorkspaceContext.Provider>

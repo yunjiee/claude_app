@@ -8,6 +8,7 @@ const DEFAULT_DATA: WorkspaceData = {
       id: 'welcome',
       title: '歡迎使用',
       content: '這是你的第一個頁面。\n\n點擊左側「+ 新增頁面」來建立更多頁面，或點擊日曆上的日期新增備忘。',
+      tags: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
@@ -48,6 +49,13 @@ export function savePage(page: Page): void {
 export function deletePage(id: string): void {
   const data = load()
   data.pages = data.pages.filter((p) => p.id !== id)
+  save(data)
+}
+
+export function reorderPages(ids: string[]): void {
+  const data = load()
+  const map = new Map(data.pages.map((p) => [p.id, p]))
+  data.pages = ids.map((id) => map.get(id)).filter(Boolean) as Page[]
   save(data)
 }
 
