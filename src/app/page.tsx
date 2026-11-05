@@ -1,14 +1,28 @@
 'use client'
 
 import Link from 'next/link'
+import { motion } from 'motion/react'
 import { useTheme } from '@/contexts/ThemeContext'
 
-const THEME_CFG: Record<string, { from: string; via: string; to: string; light: string; ring: string }> = {
-  blog:      { from: 'from-orange-400', via: 'via-amber-400',  to: 'to-yellow-400',  light: 'bg-orange-50',  ring: 'ring-orange-200' },
-  portfolio: { from: 'from-violet-500', via: 'via-purple-500', to: 'to-indigo-500',  light: 'bg-violet-50',  ring: 'ring-violet-200' },
-  shop:      { from: 'from-emerald-400',via: 'via-teal-400',   to: 'to-cyan-400',    light: 'bg-emerald-50', ring: 'ring-emerald-200' },
-  workspace: { from: 'from-blue-500',   via: 'via-indigo-500', to: 'to-violet-500',  light: 'bg-blue-50',    ring: 'ring-blue-200' },
+const THEME_CFG: Record<string, { from: string; to: string; light: string; ring: string; shadow: string }> = {
+  blog:      { from: 'from-orange-400', to: 'to-amber-400',   light: 'bg-orange-50/80',  ring: 'ring-orange-200',  shadow: 'shadow-orange-200/60' },
+  portfolio: { from: 'from-violet-500', to: 'to-purple-500',  light: 'bg-violet-50/80',  ring: 'ring-violet-200',  shadow: 'shadow-violet-200/60' },
+  shop:      { from: 'from-emerald-400',to: 'to-teal-400',    light: 'bg-emerald-50/80', ring: 'ring-emerald-200', shadow: 'shadow-emerald-200/60' },
+  workspace: { from: 'from-blue-500',   to: 'to-indigo-500',  light: 'bg-blue-50/80',    ring: 'ring-blue-200',    shadow: 'shadow-blue-200/60' },
 }
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay },
+})
+
+const inView = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.45, delay },
+})
 
 const STEPS = [
   { n: '01', icon: '🎯', title: '選擇主題', desc: '從四個主題選一個切入，可隨時切換，互不干擾' },
@@ -22,68 +36,152 @@ const FEATURES = [
   { icon: '🔐', label: '登入保護',  desc: '部落格與商城限制登入後才能進入',         bar: 'from-emerald-400 to-teal-600' },
 ]
 
+function AppPreview() {
+  return (
+    <motion.div
+      {...inView(0.15)}
+      className="relative mx-auto mt-14 max-w-3xl"
+    >
+      {/* Glow */}
+      <div className="absolute inset-x-20 top-4 h-32 bg-gradient-to-r from-blue-400/30 via-violet-400/30 to-indigo-400/30 blur-3xl -z-10" />
+
+      {/* Browser chrome */}
+      <div className="rounded-2xl border border-gray-200/80 bg-white/90 backdrop-blur-xl shadow-2xl shadow-gray-300/40 overflow-hidden ring-1 ring-gray-100">
+        {/* Title bar */}
+        <div className="flex items-center gap-3 border-b border-gray-100 bg-gray-50/80 px-4 py-3">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-400/90" />
+            <div className="w-3 h-3 rounded-full bg-yellow-400/90" />
+            <div className="w-3 h-3 rounded-full bg-green-400/90" />
+          </div>
+          <div className="flex-1 mx-4 h-5 rounded-md bg-white border border-gray-200 flex items-center px-3 gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-400" />
+            <span className="text-[10px] text-gray-400 font-mono">claude-app.vercel.app</span>
+          </div>
+        </div>
+
+        {/* App UI mockup */}
+        <div className="flex h-56 sm:h-72">
+          {/* Sidebar */}
+          <div className="w-44 flex-shrink-0 border-r border-gray-100 bg-gray-50/60 p-4 flex flex-col gap-1">
+            <div className="text-[11px] font-bold text-gray-900 mb-2 px-2">🗂 工作區</div>
+            {[
+              { icon: '📄', name: 'Q4 計劃', color: 'text-blue-500' },
+              { icon: '🎨', name: '設計稿整理', color: 'text-violet-500' },
+              { icon: '📌', name: '讀書筆記', color: 'text-orange-500' },
+              { icon: '✅', name: '本週待辦', color: 'text-emerald-500' },
+            ].map((p) => (
+              <div key={p.name} className="flex items-center gap-2 text-[11px] text-gray-500 py-1.5 px-2 rounded-lg hover:bg-white/80 cursor-pointer">
+                <span className={p.color}>{p.icon}</span>
+                <span>{p.name}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Main content */}
+          <div className="flex-1 p-6">
+            {/* Header line */}
+            <div className="flex items-center gap-2 mb-5">
+              <div className="h-5 w-32 rounded-lg bg-gray-200/80" />
+              <div className="h-5 w-16 rounded-full bg-blue-100 ml-auto" />
+            </div>
+            {/* Content lines */}
+            <div className="space-y-2.5 mb-6">
+              <div className="h-2.5 w-full rounded-full bg-gray-100" />
+              <div className="h-2.5 w-5/6 rounded-full bg-gray-100" />
+              <div className="h-2.5 w-4/6 rounded-full bg-gray-100" />
+            </div>
+            {/* Tags */}
+            <div className="flex gap-2 mb-6">
+              <div className="h-6 w-14 rounded-full bg-blue-100" />
+              <div className="h-6 w-20 rounded-full bg-violet-100" />
+              <div className="h-6 w-12 rounded-full bg-emerald-100" />
+            </div>
+            {/* Calendar mini */}
+            <div className="grid grid-cols-7 gap-1">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-5 rounded text-[9px] flex items-center justify-center font-medium ${
+                    i === 8 ? 'bg-blue-500 text-white' :
+                    i === 3 || i === 11 ? 'bg-orange-100 text-orange-500' :
+                    'bg-gray-50 text-gray-400'
+                  }`}
+                >
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 export default function HomePage() {
   const { themes } = useTheme()
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-20">
+    <main className="mx-auto max-w-5xl px-6 py-20 overflow-hidden">
 
-      {/* ───── HERO ───── */}
-      <section className="relative text-center mb-28">
-        {/* Background blobs */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-16 left-1/4 h-80 w-80 rounded-full bg-gradient-to-br from-blue-100 to-indigo-200 blur-3xl opacity-60" />
-          <div className="absolute top-8 right-1/5 h-64 w-64 rounded-full bg-gradient-to-br from-violet-100 to-pink-200 blur-3xl opacity-50" />
-          <div className="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-gradient-to-br from-amber-100 to-orange-200 blur-2xl opacity-40" />
+      {/* ───── AURORA HERO ───── */}
+      <section className="relative text-center mb-32">
+        {/* Aurora blobs */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="aurora-1 absolute top-0 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-blue-300/40 to-indigo-400/30 blur-3xl" />
+          <div className="aurora-2 absolute top-10 right-1/4 h-80 w-80 rounded-full bg-gradient-to-br from-violet-300/40 to-pink-300/30 blur-3xl" />
+          <div className="aurora-3 absolute -bottom-10 left-1/3 h-64 w-64 rounded-full bg-gradient-to-br from-amber-200/30 to-orange-300/20 blur-3xl" />
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur px-4 py-1.5 text-xs font-medium text-gray-500 mb-7 shadow-sm">
+        <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-gray-500 mb-8 shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
           正在開發中
-        </div>
+        </motion.div>
 
-        <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-[1.08] mb-5">
+        <motion.h1 {...fadeUp(0.08)} className="text-6xl sm:text-7xl font-black tracking-tight leading-[1.06] mb-5">
           一個平台<br />
           <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
             無限可能
           </span>
-        </h1>
-        <p className="text-base sm:text-lg text-gray-400 max-w-sm mx-auto leading-relaxed">
+        </motion.h1>
+
+        <motion.p {...fadeUp(0.16)} className="text-base sm:text-lg text-gray-400 max-w-sm mx-auto leading-relaxed mb-10">
           部落格 · 作品集 · 商城 · 工作區<br />
           <span className="text-sm">自由切換，專注在你想做的事</span>
-        </p>
+        </motion.p>
 
-        <div className="mt-10 flex items-center justify-center gap-3">
+        <motion.div {...fadeUp(0.22)} className="flex items-center justify-center gap-3">
           <Link href="/workspace"
-            className="rounded-full bg-gray-900 px-8 py-3 text-sm font-semibold text-white shadow-lg hover:bg-gray-700 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-95">
+            className="rounded-full bg-gray-900 px-8 py-3 text-sm font-bold text-white shadow-lg hover:bg-gray-700 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-95">
             開始使用
           </Link>
           <Link href="/blog"
-            className="rounded-full border border-gray-200 bg-white/70 backdrop-blur px-8 py-3 text-sm font-medium text-gray-600 hover:border-gray-300 hover:bg-white hover:shadow-sm transition-all">
+            className="rounded-full border border-gray-200 bg-white/70 backdrop-blur px-8 py-3 text-sm font-semibold text-gray-600 hover:border-gray-300 hover:bg-white hover:shadow-sm transition-all">
             瀏覽部落格
           </Link>
-        </div>
+        </motion.div>
+
+        <AppPreview />
       </section>
 
       {/* ───── STEP FLOW ───── */}
-      <section className="mb-24">
-        <p className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">三步開始</p>
+      <section className="mb-28">
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">三步開始</motion.p>
 
         <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-100 rounded-3xl overflow-hidden shadow-sm">
           {STEPS.map((s, i) => (
-            <div key={s.n} className="relative flex flex-col bg-white p-8 group hover:bg-gray-50/50 transition-colors">
-              {/* Connector arrow */}
+            <motion.div key={s.n} {...inView(i * 0.1)} className="relative flex flex-col bg-white p-8 hover:bg-gray-50/50 transition-colors">
               {i < 2 && (
-                <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm items-center justify-center text-gray-400 text-[11px]">
+                <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm items-center justify-center text-gray-400 text-sm">
                   ›
                 </div>
               )}
-
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <span className="text-[11px] font-bold tracking-widest text-gray-300">{s.n}</span>
-                  <div className="mt-1 w-10 h-10 rounded-xl bg-gray-900 text-white text-sm font-bold flex items-center justify-center shadow">
-                    {s.n.replace('0', '')}
+                  <div className="text-[10px] font-bold tracking-widest text-gray-300 mb-1">{s.n}</div>
+                  <div className="w-10 h-10 rounded-xl bg-gray-900 text-white text-sm font-bold flex items-center justify-center shadow">
+                    {parseInt(s.n)}
                   </div>
                 </div>
                 <div>
@@ -94,65 +192,68 @@ export default function HomePage() {
                   <p className="text-xs text-gray-400 leading-relaxed">{s.desc}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ───── THEME CARDS ───── */}
-      <section className="mb-24">
-        <p className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">選擇主題</p>
+      {/* ───── THEME CARDS (glassmorphism on gradient bg) ───── */}
+      <section className="mb-28">
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">選擇主題</motion.p>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {themes.map((theme) => {
-            const c = THEME_CFG[theme.id] ?? { from: 'from-gray-400', via: 'via-gray-400', to: 'to-gray-500', light: 'bg-gray-50', ring: 'ring-gray-200' }
-            return (
-              <Link
-                key={theme.id}
-                href={theme.path}
-                className={`group relative flex flex-col rounded-3xl overflow-hidden border border-gray-100 hover:ring-2 ${c.ring} hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300`}
-              >
-                {/* Gradient header */}
-                <div className={`${c.light} px-6 pt-6 pb-5 relative overflow-hidden`}>
-                  <div className={`absolute inset-0 bg-gradient-to-br ${c.from} ${c.to} opacity-10`} />
-                  <div className={`absolute -right-4 -top-4 w-16 h-16 rounded-full bg-gradient-to-br ${c.from} ${c.to} opacity-20 blur-xl`} />
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${c.from} ${c.to} flex items-center justify-center text-xl shadow-md relative z-10`}>
-                    {theme.icon}
-                  </div>
-                </div>
+        <div className="relative rounded-3xl p-8 overflow-hidden">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 -z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(99,102,241,0.3),transparent_60%)] -z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(139,92,246,0.2),transparent_60%)] -z-10" />
 
-                {/* Top accent line */}
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${c.from} ${c.to}`} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {themes.map((theme, i) => {
+              const c = THEME_CFG[theme.id] ?? { from: 'from-gray-400', to: 'to-gray-500', light: 'bg-white/10', ring: 'ring-white/20', shadow: 'shadow-gray-500/30' }
+              return (
+                <motion.div key={theme.id} {...inView(i * 0.08)}>
+                  <Link
+                    href={theme.path}
+                    className={`group relative flex flex-col rounded-2xl border border-white/10 bg-white/8 backdrop-blur-md hover:bg-white/15 hover:border-white/20 hover:shadow-2xl ${c.shadow} hover:-translate-y-1.5 transition-all duration-300 overflow-hidden`}
+                  >
+                    <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${c.from} ${c.to} opacity-80`} />
 
-                {/* Body */}
-                <div className="flex-1 bg-white px-6 pb-6 pt-4">
-                  <h2 className="text-sm font-bold text-gray-900 mb-1">{theme.name}</h2>
-                  <p className="text-xs text-gray-400 leading-relaxed">{theme.description}</p>
-                  <div className={`mt-4 inline-flex items-center gap-1 text-xs font-semibold bg-gradient-to-r ${c.from} ${c.to} bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-all`}>
-                    <span>前往</span>
-                    <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
+                    <div className="p-5">
+                      <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${c.from} ${c.to} flex items-center justify-center text-xl shadow-lg mb-4`}>
+                        {theme.icon}
+                      </div>
+                      <h2 className="text-sm font-bold text-white mb-1.5">{theme.name}</h2>
+                      <p className="text-xs text-white/50 leading-relaxed">{theme.description}</p>
+                    </div>
+
+                    <div className="px-5 pb-5 flex items-center gap-1 text-xs font-bold text-white/30 group-hover:text-white/70 group-hover:gap-2 transition-all">
+                      <span>前往</span>
+                      <span>→</span>
+                    </div>
+                  </Link>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
       {/* ───── FEATURES ───── */}
       <section>
-        <p className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">核心特色</p>
+        <motion.p {...inView()} className="text-[11px] font-bold tracking-[.18em] text-gray-400 uppercase text-center mb-10">核心特色</motion.p>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.label} className="relative flex gap-4 items-start rounded-2xl border border-gray-100 bg-white p-6 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all">
+          {FEATURES.map((f, i) => (
+            <motion.div key={f.label} {...inView(i * 0.1)}
+              className="relative flex gap-4 items-start rounded-2xl border border-gray-100 bg-white p-6 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
               <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${f.bar} rounded-l-2xl`} />
               <div className="text-2xl">{f.icon}</div>
               <div>
                 <p className="font-bold text-sm text-gray-900">{f.label}</p>
                 <p className="mt-1 text-xs text-gray-400 leading-relaxed">{f.desc}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

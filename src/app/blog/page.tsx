@@ -1,10 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'motion/react'
 import PageLayout from '@/components/layout/PageLayout'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import ErrorMessage from '@/components/ui/ErrorMessage'
 import { useApi } from '@/hooks/useApi'
+
+const inView = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.4, delay },
+})
 
 interface Post {
   id: string
@@ -62,7 +70,7 @@ export default function BlogPage() {
         <div className="space-y-5">
 
           {/* ── Featured first post ── */}
-          <article className="group cursor-pointer relative overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+          <motion.article {...inView(0)} className="group cursor-pointer relative overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             {/* Left accent */}
             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-orange-400 to-amber-500 rounded-l-3xl" />
             {/* Decorative circle */}
@@ -83,15 +91,16 @@ export default function BlogPage() {
                 <span>→</span>
               </div>
             </div>
-          </article>
+          </motion.article>
 
           {/* ── Rest of posts ── */}
           <div className="grid gap-4 sm:grid-cols-2">
-            {posts.slice(1).map((post) => {
+            {posts.slice(1).map((post, i) => {
               const { month, day } = formatDate(post.date)
               return (
-                <article
+                <motion.article
                   key={post.id}
+                  {...inView(i * 0.08 + 0.1)}
                   className="group cursor-pointer relative overflow-hidden flex gap-4 rounded-2xl border border-gray-100 bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {/* Left accent */}
@@ -118,7 +127,7 @@ export default function BlogPage() {
                       <span>→</span>
                     </div>
                   </div>
-                </article>
+                </motion.article>
               )
             })}
           </div>

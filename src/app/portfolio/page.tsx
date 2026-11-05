@@ -1,4 +1,14 @@
+'use client'
+
+import { motion } from 'motion/react'
 import PageLayout from '@/components/layout/PageLayout'
+
+const inView = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.4, delay },
+})
 
 const mockProjects = [
   { id: '1', title: '多主題 Web App',   tech: ['Next.js', 'TypeScript', 'Tailwind'], desc: '支援部落格、作品集、商城、工作區四種主題的一體化平台，可自由切換，共用同一套認證與 API 層。', emoji: '🌐', gradient: 'from-violet-500 to-purple-600', light: 'from-violet-50 to-purple-50', border: 'border-violet-100', accent: 'text-violet-600' },
@@ -30,7 +40,7 @@ export default function PortfolioPage() {
     <PageLayout title="作品集" description="個人開發作品展示">
 
       {/* ── Featured project ── */}
-      <div className={`group mb-6 cursor-pointer relative overflow-hidden rounded-3xl border ${featured.border} bg-gradient-to-br ${featured.light} p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300`}>
+      <motion.div {...inView(0)} className={`group mb-6 cursor-pointer relative overflow-hidden rounded-3xl border ${featured.border} bg-gradient-to-br ${featured.light} p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300`}>
         {/* Accent left bar */}
         <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b ${featured.gradient} rounded-l-3xl`} />
         {/* Decorative circle */}
@@ -60,7 +70,7 @@ export default function PortfolioPage() {
             <span>→</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Project grid ── */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
