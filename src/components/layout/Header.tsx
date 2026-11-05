@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { useDarkMode } from '@/contexts/DarkModeContext'
 import { useToast } from '@/contexts/ToastContext'
+import { useCart } from '@/contexts/CartContext'
 
 const THEME_ACCENT: Record<string, string> = {
   blog:      'from-orange-400 to-amber-400',
@@ -36,11 +38,14 @@ export default function Header() {
   const { user, logout } = useAuth()
   const { isDark, toggle: toggleDark } = useDarkMode()
   const { showToast } = useToast()
+  const { count } = useCart()
   const router = useRouter()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     await logout()
     showToast('已成功登出', 'success')
+    setMenuOpen(false)
     router.push('/')
   }
 
@@ -54,25 +59,22 @@ export default function Header() {
           MyApp
         </Link>
 
-        <nav className="flex items-center gap-1">
+        {/* Desktop nav */}
+        <nav className="hidden sm:flex items-center gap-1">
           {themes.map((theme) => {
             const isActive = currentTheme.id === theme.id
-            const accent = THEME_ACCENT[theme.id] ?? 'from-gray-400 to-gray-500'
             return (
               <button
                 key={theme.id}
                 onClick={() => switchTheme(theme.id)}
-                className={`relative flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition-all ${
                   isActive
                     ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-sm'
                     : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                {isActive && (
-                  <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${accent} opacity-0`} />
-                )}
                 <span>{theme.icon}</span>
-                <span className="hidden sm:inline">{theme.name}</span>
+                <span>{theme.name}</span>
               </button>
             )
           })}
@@ -101,31 +103,116 @@ export default function Header() {
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
 
+          {/* Cart icon */}
+          <Link
+            href="/shop"
+            className="relative flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="購物車"
+          >
+            <span className="text-base">🛒</span>
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[1.1rem] h-[1.1rem] rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center px-0.5">
+                {count > 99 ? '99+' : count}
+              </span>
+            )}
+          </Link>
+
+          {/* User / login */}
           {user ? (
-            <>
-              <div className="hidden sm:flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+            <div className="hidden sm:flex items-center gap-2">
+              <Link href="/account" className="flex items-center gap-2 rounded-xl px-2.5 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-[10px] font-bold">
                   {user.name.slice(0, 1)}
                 </div>
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">{user.name}</span>
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
-                className="rounded-xl border border-gray-200 dark:border-gray-700 px-3.5 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all"
+                className="rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 transition-all"
               >
                 登出
               </button>
-            </>
+            </div>
           ) : (
             <Link
               href="/login"
-              className="rounded-xl bg-gray-900 dark:bg-gray-100 px-4 py-1.5 text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-200 hover:shadow-sm transition-all active:scale-95"
+              className="hidden sm:block rounded-xl bg-gray-900 dark:bg-gray-100 px-4 py-1.5 text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-200 hover:shadow-sm transition-all active:scale-95"
             >
               登入
             </Link>
           )}
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            className="sm:hidden flex flex-col items-center justify-center w-9 h-9 gap-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="選單"
+          >
+            <span className={`block w-5 h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+          </button>
         </div>
       </div>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <div className="sm:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 px-6 pb-4 pt-3 space-y-1">
+          {themes.map((theme) => {
+            const isActive = currentTheme.id === theme.id
+            return (
+              <button
+                key={theme.id}
+                onClick={() => { switchTheme(theme.id); setMenuOpen(false) }}
+                className={`w-full flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all text-left ${
+                  isActive
+                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <span>{theme.icon}</span>
+                <span>{theme.name}</span>
+              </button>
+            )
+          })}
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-2 mt-2">
+            <button
+              onClick={toggleDark}
+              className="w-full flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 text-left"
+            >
+              <span>{isDark ? '☀️' : '🌙'}</span>
+              <span>{isDark ? '淺色模式' : '深色模式'}</span>
+            </button>
+            {user ? (
+              <>
+                <Link
+                  href="/account"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <span>👤</span>
+                  <span>{user.name}</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-left"
+                >
+                  <span>🚪</span>
+                  <span>登出</span>
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="block rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-2.5 text-sm font-semibold text-center"
+              >
+                登入
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   )
 }

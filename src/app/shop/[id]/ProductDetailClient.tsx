@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Product, TAG_CFG, DEFAULT_GRADIENT, discount, getRelated } from '@/lib/shop/products'
+import { useCart } from '@/contexts/CartContext'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -15,18 +16,18 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function ProductDetailClient({ product }: { product: Product }) {
-  const [qty, setQty]       = useState(1)
-  const [added, setAdded]   = useState(false)
-  const [tab, setTab]       = useState<'specs' | 'reviews' | 'related'>('specs')
-  const [color, setColor]   = useState(product.colors?.[0] ?? '')
+  const [qty, setQty]     = useState(1)
+  const [tab, setTab]     = useState<'specs' | 'reviews' | 'related'>('specs')
+  const [color, setColor] = useState(product.colors?.[0] ?? '')
+  const { add, hasItem }  = useCart()
 
   const cfg      = product.tag ? TAG_CFG[product.tag] : null
   const gradient = cfg?.gradient ?? DEFAULT_GRADIENT
   const related  = getRelated(product.relatedIds)
+  const added    = hasItem(product.id)
 
   const handleAddCart = () => {
-    setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+    for (let i = 0; i < qty; i++) add(product.id)
   }
 
   return (

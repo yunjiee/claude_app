@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { DarkModeProvider } from '@/contexts/DarkModeContext'
 import { ToastProvider } from '@/contexts/ToastContext'
+import { CartProvider } from '@/contexts/CartContext'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import ToastContainer from '@/components/ui/ToastContainer'
@@ -37,11 +38,13 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           <DarkModeProvider>
             <ToastProvider>
               <ThemeProvider>
-                <Header />
-                <div className="flex-1">{children}</div>
-                <Footer />
-                <ToastContainer />
-                <CommandPalette />
+                <CartProvider>
+                  <Header />
+                  <div className="flex-1">{children}</div>
+                  <Footer />
+                  <ToastContainer />
+                  <CommandPalette />
+                </CartProvider>
               </ThemeProvider>
             </ToastProvider>
           </DarkModeProvider>

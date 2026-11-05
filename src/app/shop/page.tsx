@@ -4,22 +4,23 @@ import { useState } from 'react'
 import Link from 'next/link'
 import PageLayout from '@/components/layout/PageLayout'
 import { PRODUCTS, TAG_CFG, DEFAULT_GRADIENT, discount } from '@/lib/shop/products'
+import { useCart } from '@/contexts/CartContext'
 
 const CATEGORIES = ['全部', '輸入設備', '顯示器', '音訊設備', '配件', '充電配件']
 
 export default function ShopPage() {
-  const [cart, setCart]         = useState<string[]>([])
+  const { add, hasItem, count, items } = useCart()
   const [category, setCategory] = useState('全部')
 
   const addToCart = (id: string, e: React.MouseEvent) => {
     e.preventDefault()
-    setCart(prev => [...prev, id])
+    add(id)
   }
-  const isInCart = (id: string) => cart.includes(id)
+  const isInCart = (id: string) => hasItem(id)
 
-  const totalPrice = cart.reduce((sum, id) => {
-    const p = PRODUCTS.find(p => p.id === id)
-    return sum + (p?.price ?? 0)
+  const totalPrice = items.reduce((sum, item) => {
+    const p = PRODUCTS.find(p => p.id === item.id)
+    return sum + (p?.price ?? 0) * item.qty
   }, 0)
 
   const filtered = category === '全部'
@@ -30,14 +31,14 @@ export default function ShopPage() {
     <PageLayout title="商城" description="精選辦公 & 生活好物">
 
       {/* 購物車橫幅 */}
-      {cart.length > 0 && (
+      {count > 0 && (
         <div className="mb-7 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 px-5 py-4">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-white text-sm font-bold flex items-center justify-center shadow">
-            {cart.length}
+            {count}
           </div>
           <div className="flex-1">
             <p className="text-sm font-bold text-gray-900">購物車</p>
-            <p className="text-xs text-gray-400">{cart.length} 件商品 · NT$ {totalPrice.toLocaleString()}</p>
+            <p className="text-xs text-gray-400">{count} 件商品 · NT$ {totalPrice.toLocaleString()}</p>
           </div>
           <button className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-5 py-2 text-sm font-semibold shadow hover:shadow-md hover:-translate-y-0.5 transition-all active:scale-95">
             前往結帳 →
