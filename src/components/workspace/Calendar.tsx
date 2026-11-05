@@ -46,8 +46,10 @@ function EventModal({ initialDate, event, onSave, onDelete, onClose }: ModalProp
 
   useEffect(() => { titleRef.current?.focus() }, [])
 
+  const timeError = time && endTime && endTime <= time
+
   const handleSave = () => {
-    if (!title.trim() || isSaving.current) return
+    if (!title.trim() || isSaving.current || timeError) return
     isSaving.current = true
     onSave({ title: title.trim(), date, time: time || undefined, endTime: endTime || undefined, note: note || undefined, color })
     onClose()
@@ -107,6 +109,11 @@ function EventModal({ initialDate, event, onSave, onDelete, onClose }: ModalProp
             </div>
           </div>
 
+          {/* Time error */}
+          {timeError && (
+            <p className="text-xs text-red-500 -mt-2">結束時間不能早於或等於開始時間</p>
+          )}
+
           {/* Color picker */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 mb-2">顏色標籤</label>
@@ -150,7 +157,7 @@ function EventModal({ initialDate, event, onSave, onDelete, onClose }: ModalProp
             </button>
             <button
               onClick={handleSave}
-              disabled={!title.trim()}
+              disabled={!title.trim() || !!timeError}
               className="rounded-xl px-4 py-2 text-xs font-bold bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-40 transition-colors"
             >
               {event ? '儲存' : '新增'}

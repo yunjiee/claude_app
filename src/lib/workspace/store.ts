@@ -61,7 +61,20 @@ export function reorderPages(ids: string[]): void {
 
 // --- Events ---
 export function getEvents(): CalendarEvent[] {
-  return load().events
+  const data = load()
+  // 去除 title+date+time 完全相同的重複行程（保留最後建立的那筆）
+  const seen = new Map<string, CalendarEvent>()
+  for (const e of data.events) {
+    const key = `${e.title}|${e.date}|${e.time ?? ''}|${e.endTime ?? ''}`
+    seen.set(key, e)
+  }
+  const deduped = Array.from(seen.values())
+  // 若有去除，同步回 localStorage
+  if (deduped.length !== data.events.length) {
+    data.events = deduped
+    save(data)
+  }
+  return deduped
 }
 
 export function saveEvent(event: CalendarEvent): void {

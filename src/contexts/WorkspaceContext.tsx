@@ -11,7 +11,7 @@ interface WorkspaceContextValue {
   updatePage: (page: Page) => void
   deletePage: (id: string) => void
   reorderPages: (ids: string[]) => void
-  createEvent: (event: Omit<CalendarEvent, 'id'>) => void
+  createEvent: (event: Omit<CalendarEvent, 'id'>) => CalendarEvent
   updateEvent: (event: CalendarEvent) => void
   deleteEvent: (id: string) => void
 }
@@ -60,10 +60,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const createEvent = useCallback((data: Omit<CalendarEvent, 'id'>) => {
+  const createEvent = useCallback((data: Omit<CalendarEvent, 'id'>): CalendarEvent => {
     const event: CalendarEvent = { id: store.generateId(), ...data }
     store.saveEvent(event)
     setEvents((prev) => [...prev, event])
+    return event
   }, [])
 
   const updateEvent = useCallback((event: CalendarEvent) => {

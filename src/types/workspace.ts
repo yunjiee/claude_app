@@ -5,6 +5,7 @@ export interface Page {
   tags: string[]
   createdAt: string
   updatedAt: string
+  linkedEventId?: string  // 連動的日曆行程 ID
 }
 
 export interface CalendarEvent {
